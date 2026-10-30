@@ -1,0 +1,30 @@
+# Dependencies and build output
+node_modules
+.next
+out
+coverage
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Source control and local tooling
+.git
+.github
+.vscode
+.idea
+.agents
+.codex
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# OS/editor artifacts and design-only references
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+CueFX Screens.html

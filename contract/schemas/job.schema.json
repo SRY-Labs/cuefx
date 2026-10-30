@@ -1,0 +1,39 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://schemas.cuefx.invalid/job.schema.json",
+ "title": "CueFX render job (one look)",
+ "description": "Returned by generate and by job updates (generate: task 18), and by the manual render (task 21: POST /api/manual/{id}/result, GET /api/jobs, GET /api/jobs/{id}). v2.3 adds status waiting and the optional manual, clip_id, make_key, files and warnings. v2.4: a manual export may be running (stage 0, Preparing shot) before it is waiting.",
+ "type": "object", "additionalProperties": false,
+ "required": ["id", "look", "status", "stage", "stage_name", "progress", "elapsed_s", "eta_s", "error"],
+ "properties": {
+  "$comment": {"type": "string", "description": "free text, ignored (marks illustrative samples)"},
+  "id": {"type": "string"},
+  "look": {"type": "string", "description": "look id"},
+  "status": {"enum": ["queued", "waiting", "running", "done", "failed", "cancelled"], "description": "waiting (v2.3): a manual job whose package is exported; it waits for the LTX result to be uploaded"},
+  "stage": {"type": "integer", "minimum": 0, "maximum": 5},
+  "stage_name": {"enum": ["Preparing shot", "Building reference frame", "Rendering (pass 1 of 2)", "Refining (pass 2 of 2)", "Blending into your footage", "Done"]},
+  "progress": {"type": "number", "minimum": 0, "maximum": 1},
+  "elapsed_s": {"type": "number", "minimum": 0},
+  "eta_s": {"type": ["number", "null"], "minimum": 0, "description": "null when unknown"},
+  "error": {
+   "oneOf": [
+    {"type": "null"},
+    {"type": "object", "additionalProperties": false, "required": ["code", "message"],
+     "properties": {"code": {"enum": ["gpu_memory", "server_lost", "render_failed", "cancelled", "input_invalid"]}, "message": {"type": "string"}}}
+   ]
+  },
+  "manual": {"type": "boolean", "description": "v2.3: true for a manual render (exported, run by hand in ComfyUI, result uploaded); missing means false"},
+  "clip_id": {"type": "string", "description": "v2.3: the clip the job renders on"},
+  "make_key": {"type": "string", "description": "v2.3: the Make key of the cue and look the job was made for"},
+  "files": {
+   "type": "object", "additionalProperties": false,
+   "description": "v2.3: download/preview URLs that exist now",
+   "properties": {
+    "package_download": {"type": "string", "description": "manual: the ComfyUI package (zip)"},
+    "final_preview": {"type": "string", "description": "done: the final video, browser H.264, inline"},
+    "final_download": {"type": "string", "description": "done: the same file, as an attachment"}
+   }
+  },
+  "warnings": {"type": "array", "items": {"type": "string"}, "description": "v2.3: plain-text notes from the steps (degrade, don't fail)"}
+ }
+}

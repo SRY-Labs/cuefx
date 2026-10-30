@@ -1,0 +1,37 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://schemas.cuefx.invalid/standin_result.schema.json",
+ "title": "CueFX stand-in render result (POST /api/standin, contract/HTTP.md)",
+ "description": "Make (grey-ball layout + code-drawn stand-in) and Merge of one cue on its clip, no LTX. `files` are URLs on the same server (root-relative). The hard comp is Merge's final.mp4 (footage + stand-in); the element video is the stand-in alone on black at plate size.",
+ "type": "object", "additionalProperties": false,
+ "required": ["standin_id", "make_key", "clip_id", "frames", "fps", "plate_size", "effect_range", "files", "cached", "warnings"],
+ "properties": {
+  "standin_id": {"type": "string", "pattern": "^[0-9a-f]{12}-[0-9a-f]{12}$", "description": "<make_key>-<merge id>; names the files"},
+  "make_key": {"type": "string", "pattern": "^[0-9a-f]{12}$", "description": "the Make cache key (cuefx.make_key), as the CLI prints it"},
+  "clip_id": {"type": "string", "pattern": "^[0-9a-f]{12}$"},
+  "frames": {"type": "integer", "minimum": 1},
+  "fps": {"type": "number", "exclusiveMinimum": 0},
+  "plate_size": {"type": "array", "items": {"type": "integer", "minimum": 1}, "minItems": 2, "maxItems": 2},
+  "effect_range": {
+   "type": "object", "additionalProperties": false, "required": ["start", "end"],
+   "description": "the frames Make and Merge used, [start, end): the cue's effect_range grown to cover the entrance, then trimmed (CONTRACT.md 7.6)",
+   "properties": {"start": {"type": "integer", "minimum": 0}, "end": {"type": "integer", "minimum": 1}}
+  },
+  "files": {
+   "type": "object", "additionalProperties": false,
+   "required": ["hardcomp_preview", "hardcomp_download", "element_download", "layout_download"],
+   "properties": {
+    "hardcomp_preview": {"type": "string", "description": "hard comp, H.264 yuv420p, plate size, the plate's fps and frame count; shown inline"},
+    "hardcomp_download": {"type": "string", "description": "the same hard comp as a download (Content-Disposition: attachment)"},
+    "element_download": {"type": "string", "description": "the element video exactly as scripts/make_element_video.py writes it (H.264 4:4:4 CRF 0), download"},
+    "layout_download": {"type": "string", "description": "layout.mp4 exactly as Make writes it (grey ball on black, canvas size, window frames), download"}
+   }
+  },
+  "cached": {"type": "boolean", "description": "true when this exact cue was rendered before and nothing ran"},
+  "warnings": {"type": "array", "items": {"type": "string"}, "description": "plain-text notes from Make and Merge (degrade, don't fail)"},
+  "timings_s": {
+   "type": "object", "additionalProperties": {"type": "number", "minimum": 0},
+   "description": "optional. Seconds per stage of the render that made these files (the same numbers when `cached`): landmarks (behind ranges only), make (0 when an earlier Make was reused), merge, total; and, once element.mp4 has been requested, element_layers and element. 0 = the stage did not run."
+  }
+ }
+}

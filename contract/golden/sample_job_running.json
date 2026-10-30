@@ -1,0 +1,12 @@
+{
+ "$comment": "ILLUSTRATIVE SAMPLE, not backend output: generate is not built yet (task 18). Shape: job.schema.json.",
+ "id": "job-7f3a9c",
+ "look": "energy_orb",
+ "status": "running",
+ "stage": 2,
+ "stage_name": "Rendering (pass 1 of 2)",
+ "progress": 0.37,
+ "elapsed_s": 151.0,
+ "eta_s": 259.0,
+ "error": null
+}

@@ -1,0 +1,44 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://schemas.cuefx.invalid/result.schema.json",
+ "title": "CueFX render result (Review screen)",
+ "description": "What a finished job hands to the Review screen. GET /api/jobs/{id}/result (v2.4, manual jobs) fills the paths with download URLs under /api/jobs/{id}/, and a check nobody computes with status warn, value null, message 'not measured yet'. v2.4 makes videos.compare, layers.effect_on_black and layers.matte nullable (null when the file does not exist).",
+ "type": "object", "additionalProperties": false,
+ "required": ["job_id", "look", "pipeline", "videos", "layers", "checks", "warnings"],
+ "properties": {
+  "$comment": {"type": "string", "description": "free text, ignored (marks illustrative samples)"},
+  "job_id": {"type": "string"},
+  "look": {"type": "string"},
+  "pipeline": {"const": "composite"},
+  "videos": {
+   "type": "object", "additionalProperties": false, "required": ["final", "compare"],
+   "properties": {"final": {"type": "string"}, "compare": {"type": ["string", "null"]}}
+  },
+  "layers": {
+   "type": "object", "additionalProperties": false, "required": ["effect_on_black", "matte", "occluder_matte"],
+   "properties": {
+    "effect_on_black": {"type": ["string", "null"]},
+    "matte": {"type": ["string", "null"]},
+    "occluder_matte": {"type": ["string", "null"], "description": "null when the cue has no behind ranges; v2.4: also null while no step writes an occluder matte video (the manual result always sends null)"}
+   }
+  },
+  "checks": {
+   "type": "array",
+   "description": "at least: plate_unchanged, black_clamp, matte_source, face_shift_px",
+   "items": {
+    "type": "object", "additionalProperties": false,
+    "required": ["id", "label", "status", "value", "unit", "frames", "message"],
+    "properties": {
+     "id": {"type": "string"},
+     "label": {"type": "string"},
+     "status": {"enum": ["pass", "warn", "fail"]},
+     "value": {"type": ["number", "string", "null"]},
+     "unit": {"type": ["string", "null"]},
+     "frames": {"oneOf": [{"type": "null"}, {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}]},
+     "message": {"type": "string"}
+    }
+   }
+  },
+  "warnings": {"type": "array", "items": {"$ref": "warning.schema.json"}}
+ }
+}

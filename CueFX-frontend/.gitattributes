@@ -1,0 +1,2 @@
+# Keep the retained design reference out of GitHub's language statistics.
+*.html linguist-detectable=false

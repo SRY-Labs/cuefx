@@ -1,0 +1,20 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://schemas.cuefx.invalid/track.schema.json",
+ "title": "CueFX hand track (API form)",
+ "description": "One entry per plate frame 0..frames-1, in order. x, y: palm centre in plate pixels, already smoothed by the tracker. Maps to the cue file's track: frame=f, confidence=conf, uncertain=lost.",
+ "type": "array",
+ "items": {
+  "type": "object", "additionalProperties": false,
+  "required": ["frame", "x", "y", "confidence", "uncertain"],
+  "properties": {
+   "frame": {"type": "integer", "minimum": 0},
+   "x": {"type": "number"},
+   "y": {"type": "number"},
+   "confidence": {"type": "number", "minimum": 0, "maximum": 1, "description": "detector score; 0 on frames where the hand was not detected (interpolated)"},
+   "uncertain": {"type": "boolean", "description": "inside a lost gap: the position is a guess"},
+   "source": {"enum": ["tracked", "interpolated", "corrected"], "description": "backend extra; the UI may ignore it"},
+   "palm_w": {"type": "number", "description": "backend extra: palm width in plate px (index to little-finger knuckle); for a body point other than the palm (v2.6) its size measure, see CONTRACT.md section 2"}
+  }
+ }
+}

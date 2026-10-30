@@ -1,0 +1,23 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://schemas.cuefx.invalid/preview.schema.json",
+ "title": "CueFX orb preview (one entry per plate frame)",
+ "description": "Made by the render's own code (cuefx.route.orb_path and entrance_gain). x, y, diameter: what the layout draws, plate px, 3 decimals. visibility: Merge's opacity 0..1 (fade-in, vanish). Outside the effect window nothing is drawn: diameter 0, visibility 0, x and y copied from the nearest window frame.",
+ "type": "array",
+ "items": {
+  "type": "object", "additionalProperties": false,
+  "required": ["frame", "x", "y", "diameter", "visibility", "visible", "phase"],
+  "properties": {
+   "frame": {"type": "integer", "minimum": 0},
+   "x": {"type": "number"},
+   "y": {"type": "number"},
+   "diameter": {"type": "number", "minimum": 0, "description": "drawn diameter: the path's diameter x the entrance gain"},
+   "visibility": {"type": "number", "minimum": 0, "maximum": 1},
+   "visible": {"type": "boolean", "description": "diameter > 0 and visibility > 0"},
+   "phase": {"enum": ["before", "entrance", "held", "flight", "vanish", "after"]},
+   "held": {"type": "object", "additionalProperties": false, "required": ["x", "y"],
+    "description": "optional (v2.3; POST /api/preview always sends it): the corrected track plus anchor_offset at this frame (cuefx.route.held_xy), plate px, 3 decimals; where the hand marker goes. Every frame, also outside the effect window and after the release.",
+    "properties": {"x": {"type": "number"}, "y": {"type": "number"}}}
+  }
+ }
+}

@@ -1,0 +1,38 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://schemas.cuefx.invalid/warning.schema.json",
+ "title": "CueFX warning",
+ "description": "What validate (and analyze, and a render result) reports. Degrade, don't fail: only severity 'error' blocks a render.",
+ "type": "object", "additionalProperties": false,
+ "required": ["id", "severity", "code", "message", "frames", "jump", "cause"],
+ "properties": {
+  "id": {"type": "string", "description": "stable within one response: code plus the first frame or the field path"},
+  "severity": {"enum": ["info", "warning", "error"]},
+  "code": {"type": "string", "description": "a key of error_codes.json"},
+  "message": {"type": "string", "description": "plain language, from the code's template; frames shown inclusive"},
+  "detail": {"type": "string", "description": "the backend's technical text (field path first); for logs and tooltips"},
+  "frames": {
+   "description": "[start, end): end excluded; null when the warning is not about frames",
+   "oneOf": [{"type": "null"}, {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}]
+  },
+  "jump": {"type": ["integer", "null"], "description": "frame to jump to; frames[0] when there are frames"},
+  "cause": {
+   "type": "object", "required": ["kind"],
+   "description": "kind: field {path} | setting {path} | track | pass {index} | timing | tool-draw | render (v2.4: a note from a render step)",
+   "properties": {
+    "kind": {"enum": ["field", "setting", "track", "pass", "timing", "tool-draw", "render"]},
+    "path": {"type": "string"},
+    "index": {"type": "integer"}
+   }
+  },
+  "fix": {
+   "type": "object", "additionalProperties": false, "required": ["label", "op", "path", "value"],
+   "properties": {
+    "label": {"type": "string"},
+    "op": {"const": "set"},
+    "path": {"type": "string", "description": "dotted cue path, e.g. entrance.seconds"},
+    "value": {}
+   }
+  }
+ }
+}

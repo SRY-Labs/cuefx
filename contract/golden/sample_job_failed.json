@@ -1,0 +1,15 @@
+{
+ "$comment": "ILLUSTRATIVE SAMPLE, not backend output: generate is not built yet (task 18). Shape: job.schema.json.",
+ "id": "job-7f3a9c",
+ "look": "energy_orb",
+ "status": "failed",
+ "stage": 2,
+ "stage_name": "Rendering (pass 1 of 2)",
+ "progress": 0.31,
+ "elapsed_s": 132.0,
+ "eta_s": null,
+ "error": {
+  "code": "gpu_memory",
+  "message": "The GPU ran out of memory while rendering. Lower the effect size or close other GPU apps, then retry."
+ }
+}

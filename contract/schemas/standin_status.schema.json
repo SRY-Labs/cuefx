@@ -1,0 +1,17 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://schemas.cuefx.invalid/standin_status.schema.json",
+ "title": "CueFX stand-in render status (v2.3: GET /api/standin/{standin_id}, POST /api/standin?wait=0, contract/HTTP.md)",
+ "description": "Where a stand-in render is. `status`: queued (waiting for the render queue), running, done (`result` is the standin_result), failed (`error` is the contract error). `element`: the state of element.mp4, built on its first request: none (not requested yet), queued, running, done, failed (request it again to retry).",
+ "type": "object", "additionalProperties": false,
+ "required": ["standin_id", "status", "error", "element", "result"],
+ "properties": {
+  "standin_id": {"type": "string", "pattern": "^[0-9a-f]{12}-[0-9a-f]{12}$"},
+  "status": {"enum": ["queued", "running", "done", "failed"]},
+  "error": {"oneOf": [{"type": "null"},
+   {"type": "object", "additionalProperties": false, "required": ["code", "message"],
+    "properties": {"code": {"type": "string"}, "message": {"type": "string"}}}]},
+  "element": {"enum": ["none", "queued", "running", "done", "failed"]},
+  "result": {"oneOf": [{"type": "null"}, {"$ref": "standin_result.schema.json"}]}
+ }
+}

@@ -1,0 +1,102 @@
+{
+ "version": "2.1",
+ "clip": "throw_71319.mov",
+ "fps": 24,
+ "frames": 193,
+ "plate_size": [
+  1920,
+  1080
+ ],
+ "transform": {
+  "scale": 1.0,
+  "offset": [
+   0,
+   0
+  ]
+ },
+ "effect_range": {
+  "start": 34,
+  "end": 115
+ },
+ "canvas_size": [
+  1024,
+  576
+ ],
+ "canvas_rect": [
+  0,
+  0,
+  1920,
+  1080
+ ],
+ "hand": "right",
+ "hand_seed": {
+  "f": 60,
+  "x": 1160,
+  "y": 550
+ },
+ "track": [],
+ "corrections": [
+  {
+   "f": 107,
+   "x": 710,
+   "y": 470
+  },
+  {
+   "f": 108,
+   "x": 425,
+   "y": 393
+  }
+ ],
+ "correction_falloff": 12,
+ "anchor_offset": [
+  0,
+  -70
+ ],
+ "appear_frame": 40,
+ "release_frame": 108,
+ "diameter_px": 110,
+ "route": [
+  {
+   "f": 108,
+   "x": null,
+   "y": null,
+   "diameter_px": 110
+  },
+  {
+   "f": 110,
+   "x": 170,
+   "y": 345,
+   "diameter_px": 100
+  },
+  {
+   "f": 112,
+   "x": -120,
+   "y": 300,
+   "diameter_px": 90
+  }
+ ],
+ "vanish": {
+  "start": 111,
+  "end": 113
+ },
+ "behind": [
+  {
+   "start": 80,
+   "end": 91,
+   "occluder": "left_hand"
+  }
+ ],
+ "look": "energy_orb",
+ "seed": 42,
+ "grade": {
+  "tint": "#9fd4ff",
+  "brightness": 1.0,
+  "glow": 0.6,
+  "person_light": 0.4,
+  "opacity": 1.0,
+  "fade_in_frames": 3
+ },
+ "entrance": {
+  "seconds": 0.5
+ }
+}

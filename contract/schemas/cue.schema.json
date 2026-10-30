@@ -1,0 +1,150 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://schemas.cuefx.invalid/cue.schema.json",
+ "title": "CueFX cue file v2.6",
+ "description": "Shape and types only. Value rules (8k+1 windows, frames inside the clip, enums such as hand or easing_in, ranges such as opacity 0..1) are checked by `validate`, which returns them with their own codes. All ranges are [start, end): start included, end excluded. Coordinates are plate pixels, origin top-left, y down; values outside the frame are allowed. Top-level fields not listed here are kept but reported (unknown_field).",
+ "type": "object",
+ "required": ["clip", "fps", "frames", "plate_size", "hand", "hand_seed"],
+ "properties": {
+  "version": {"type": "string", "description": "\"2.3\" (written by new cues); \"2.4\" (a cue that sets body_point); \"2.5\" (a cue that sets shape or spin_deg_per_s); \"2.6\" (a cue that sets a non-fade ending or behaviour charge_up or orbit, or an orbit block); \"2.2\" files are read as they are, \"2.1\" files are read and upgraded to 2.2. Anything else: version_unsupported."},
+  "behaviour": {"type": "string", "description": "v2.3. hold_throw | hold | charge_up (v2.6) | orbit (v2.6); missing means hold_throw. hold: the effect stays on the hand for the whole window; release_frame is null and route is []. charge_up (v2.6): as hold_throw (needs release_frame and route), and from appear_frame to release_frame the effect grows from 0.6x to 1.0x its size (smoothstep) and pulses at 3.5 Hz by +-8 % of size and brightness. orbit (v2.6): no release and no route (as hold; release_frame null, route []): the effect circles the body point on the `orbit` circle, bigger and brighter at the front, smaller and dimmer at the back. Any other value: behaviour_invalid."},
+  "orbit": {
+   "type": "object", "additionalProperties": false,
+   "description": "v2.6. The circle of behaviour orbit; each missing field takes its default (GET /api/defaults -> orbit: radius 1.5 sizes, 180 deg/s, tilt 60; the tilt of a head is 80). Values outside the limits: orbit_invalid.",
+   "properties": {
+    "radius_sizes": {"type": "number", "description": "radius in size measures of the body point, above 0, up to 10"},
+    "speed_deg_per_s": {"type": "number", "description": "degrees per second, the sign is the direction, within 3600"},
+    "tilt_deg": {"type": "number", "description": "tilt of the circle's plane: 0 = a full circle seen from the front, 90 = edge on; 0 to 90"}
+   }
+  },
+  "shape": {"type": "string", "description": "v2.5. sphere | ring | crystal | cube; missing means sphere. What the layout and the stand-in draw (ring: tilted torus; crystal: elongated octahedron; cube). `diameter_px` is the shape's outer size on screen. Any other value: shape_invalid."},
+  "spin_deg_per_s": {"type": "number", "description": "v2.5. Spin of the shape in degrees per second (sign = direction, 0 = no spin). Missing means the shape's default: sphere 288 (as before), ring 90, crystal 60, cube 60."},
+  "ending": {"type": "string", "description": "v2.6. fade | burst | shatter; missing means fade. How the effect ends at vanish.start. fade: Merge fades it out linearly over vanish (as before). burst: it grows fast to 1.8x and flashes bright, then fades (at least 0.3 s). shatter: 12-20 grey shards (count and directions from `seed`) fly outward, spin, fall a little and fade (at least 0.5 s). For burst and shatter Merge applies no fade-out of its own; if the vanish is shorter than the ending needs, `cue/normalize` lengthens vanish.end (warning vanish_extended). Any other value: ending_invalid."},
+  "clip": {"type": "string", "description": "file name of the plate"},
+  "fps": {"type": "number", "exclusiveMinimum": 0},
+  "frames": {"type": "integer", "minimum": 1},
+  "plate_size": {"$ref": "#/$defs/int2", "description": "[width, height]"},
+  "transform": {
+   "type": "object", "additionalProperties": false, "required": ["scale", "offset"],
+   "properties": {"scale": {"type": "number"}, "offset": {"$ref": "#/$defs/num2"}}
+  },
+  "effect_range": {"$ref": "#/$defs/range"},
+  "canvas_size": {"$ref": "#/$defs/int2"},
+  "canvas_rect": {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4, "description": "[x, y, w, h] in plate pixels"},
+  "hand": {"type": "string", "description": "the person's hand: right | left"},
+  "hand_seed": {
+   "type": "object", "additionalProperties": false, "required": ["f", "x", "y"],
+   "properties": {"f": {"type": "integer"}, "x": {"type": "number"}, "y": {"type": "number"}}
+  },
+  "body_point": {
+   "type": "object", "additionalProperties": false, "required": ["part"],
+   "description": "v2.4. What the effect follows. Missing means {part: palm, side: <hand>}. part: palm | fist | foot | knee | shoulder | head; side: the person's left | right, null only for head. The palm's side must equal `hand`. Any other value: body_point_invalid. hand_seed is the artist's click, or for a seedless non-palm cue/new request, the real tracked sample returned as analyze_result.body_point_seed.",
+   "properties": {
+    "part": {"type": "string", "description": "palm | fist | foot | knee | shoulder | head"},
+    "side": {"type": ["string", "null"], "description": "left | right (the person's); null for head"}
+   }
+  },
+  "track": {"type": "array", "items": {"$ref": "#/$defs/track_point"}, "description": "cue-file form of the track; the API's track (track.schema.json) maps to it"},
+  "corrections": {
+   "type": "array",
+   "items": {
+    "type": "object", "additionalProperties": false, "required": ["f", "x", "y"],
+    "properties": {"f": {"type": "integer"}, "x": {"type": "number"}, "y": {"type": "number"}}
+   }
+  },
+  "correction_falloff": {"type": "integer"},
+  "anchor_offset": {"$ref": "#/$defs/num2", "description": "orb centre minus palm centre, plate px"},
+  "appear_frame": {"type": "integer"},
+  "release_frame": {"type": ["integer", "null"], "description": "null for a hold (v2.3)"},
+  "diameter_px": {"type": "number"},
+  "route": {
+   "type": "array",
+   "items": {
+    "type": "object", "additionalProperties": false, "required": ["f", "x", "y", "diameter_px"],
+    "properties": {
+     "f": {"type": "integer"},
+     "x": {"type": ["number", "null"], "description": "null only on route[0]: derived from the track"},
+     "y": {"type": ["number", "null"]},
+     "diameter_px": {"type": "number"},
+     "easing_in": {"type": "string", "default": "linear", "description": "linear | ease_in | ease_out | ease_in_out: shapes the time of the segment that ends at this point"},
+     "note": {"type": ["string", "null"], "description": "artist's label; never rendered"}
+    }
+   }
+  },
+  "vanish": {"$ref": "#/$defs/range"},
+  "behind": {
+   "type": "array",
+   "items": {
+    "type": "object", "additionalProperties": false, "required": ["start", "end", "occluder"],
+    "properties": {
+     "start": {"type": "integer"}, "end": {"type": "integer"},
+     "occluder": {
+      "description": "left_hand | right_hand | person | {\"point\": [f, x, y]}",
+      "oneOf": [
+       {"type": "string"},
+       {"type": "object", "additionalProperties": false, "required": ["point"],
+        "properties": {"point": {"type": "array", "items": {"type": "number"}}}}
+      ]
+     }
+    }
+   }
+  },
+  "look": {"type": ["string", "null"], "description": "look id (accepted for generate)"},
+  "prompt": {"type": ["string", "null"], "description": "UI field (accepted for generate)"},
+  "reference_image": {"type": ["string", "null"], "description": "UI field: file name of the uploaded still (accepted for generate)"},
+  "seed": {"type": ["integer", "null"], "description": "LTX generation seed"},
+  "grade": {
+   "type": "object", "additionalProperties": false,
+   "required": ["tint", "brightness", "glow", "person_light", "opacity", "fade_in_frames"],
+   "properties": {
+    "tint": {"type": "string", "description": "#rrggbb"},
+    "brightness": {"type": "number"},
+    "glow": {"type": "number"},
+    "person_light": {"type": "number", "description": "accepted, not used yet"},
+    "opacity": {"type": "number"},
+    "fade_in_frames": {"type": "integer"},
+    "spill": {"type": ["number", "null"], "description": "UI field 'spill on occluders' (accepted, not used yet)"}
+   }
+  },
+  "entrance": {
+   "type": "object", "additionalProperties": false,
+   "properties": {"seconds": {"type": "number", "default": 0.5}}
+  },
+  "interaction": {
+   "type": "object", "additionalProperties": false,
+   "description": "parked (interaction pass, tasks 14-16); kept as is",
+   "properties": {"crossfade_seconds": {"type": "number"}, "exit_tail_seconds": {"type": "number"}}
+  },
+  "advanced": {
+   "type": "object", "additionalProperties": false,
+   "description": "UI fields. Corrections are NOT here: they are the top-level `corrections`.",
+   "properties": {
+    "track_smoothing": {"type": "number", "minimum": 0, "maximum": 1, "description": "accepted, not used yet"},
+    "export_layers": {
+     "type": "object", "additionalProperties": false, "description": "accepted, not used yet",
+     "properties": {
+      "effect_on_black": {"type": "boolean"}, "matte": {"type": "boolean"}, "occluder_matte": {"type": "boolean"}
+     }
+    }
+   }
+  }
+ },
+ "$defs": {
+  "int2": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2},
+  "num2": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+  "range": {
+   "type": "object", "additionalProperties": false, "required": ["start", "end"],
+   "description": "[start, end): start included, end excluded",
+   "properties": {"start": {"type": "integer"}, "end": {"type": "integer"}}
+  },
+  "track_point": {
+   "type": "object", "additionalProperties": false, "required": ["f", "x", "y", "source", "palm_w", "conf"],
+   "properties": {
+    "f": {"type": "integer"}, "x": {"type": "number"}, "y": {"type": "number"},
+    "source": {"type": "string", "description": "tracked | interpolated | corrected"},
+    "palm_w": {"type": "number"}, "conf": {"type": "number"},
+    "lost": {"type": "boolean", "default": false}
+   }
+  }
+ }
+}

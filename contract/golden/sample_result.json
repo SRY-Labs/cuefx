@@ -1,0 +1,27 @@
+{
+ "$comment": "ILLUSTRATIVE SAMPLE, not backend output: generate is not built yet (task 18). Values are made up; the shape is result.schema.json.",
+ "job_id": "job-7f3a9c",
+ "look": "energy_orb",
+ "pipeline": "composite",
+ "videos": {"final": "final.mp4", "compare": "compare.mp4"},
+ "layers": {
+  "effect_on_black": "layers/effect_on_black.mp4",
+  "matte": "layers/matte.mp4",
+  "occluder_matte": "layers/occluder_matte.mp4"
+ },
+ "checks": [
+  {"id": "plate_unchanged", "label": "Footage untouched outside the effect", "status": "pass", "value": 0, "unit": "8-bit levels",
+   "frames": null, "message": "Frames outside 26–114 are the original plate, bit for bit."},
+  {"id": "black_clamp", "label": "Black level of the effect", "status": "pass", "value": 0.014, "unit": "linear",
+   "frames": [26, 115], "message": "The effect's black floor (0.014) was removed so the shot does not get brighter."},
+  {"id": "matte_source", "label": "Matte", "status": "warn", "value": "temporary", "unit": null,
+   "frames": [26, 115], "message": "temporary luminance matte — replace with Alpha Gen"},
+  {"id": "face_shift_px", "label": "Face moved", "status": "warn", "value": null, "unit": "px",
+   "frames": null, "message": "not measured yet"}
+ ],
+ "warnings": [
+  {"id": "check_pass_edge_89", "severity": "info", "code": "check_pass_edge",
+   "message": "Check the hand passing in front at 89–90: the mask edge is softest just before it lets go.",
+   "frames": [89, 91], "jump": 89, "cause": {"kind": "pass", "index": 0}}
+ ]
+}

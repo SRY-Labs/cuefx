@@ -1,0 +1,80 @@
+[
+ {
+  "id": "window_grown_26",
+  "severity": "info",
+  "code": "window_grown",
+  "message": "The effect window was grown to 26–114 so it covers the entrance.",
+  "frames": [
+   26,
+   115
+  ],
+  "jump": 26,
+  "cause": {
+   "kind": "timing"
+  },
+  "detail": "effect_range: 34..115 starts after the entrance start 28 (appear_frame 40 - 12 entrance frames); Make and Merge use 26..115 (89 frames)"
+ },
+ {
+  "id": "check_pass_edge_89",
+  "severity": "info",
+  "code": "check_pass_edge",
+  "message": "Check the hand passing in front at 89–90: the mask edge is softest just before it lets go.",
+  "frames": [
+   89,
+   91
+  ],
+  "jump": 89,
+  "cause": {
+   "kind": "pass",
+   "index": 0
+  }
+ },
+ {
+  "id": "setting_not_used_advanced.track_smoothing",
+  "severity": "info",
+  "code": "setting_not_used",
+  "message": "Track smoothing is saved with the cue, but the render does not use it yet.",
+  "frames": null,
+  "jump": null,
+  "cause": {
+   "kind": "setting",
+   "path": "advanced.track_smoothing"
+  }
+ },
+ {
+  "id": "setting_not_used_advanced.export_layers",
+  "severity": "info",
+  "code": "setting_not_used",
+  "message": "The export layers choice (every render writes all layers) is saved with the cue, but the render does not use it yet.",
+  "frames": null,
+  "jump": null,
+  "cause": {
+   "kind": "setting",
+   "path": "advanced.export_layers"
+  }
+ },
+ {
+  "id": "setting_not_used_grade.spill",
+  "severity": "info",
+  "code": "setting_not_used",
+  "message": "Spill on occluders (Merge uses a fixed spill for now) is saved with the cue, but the render does not use it yet.",
+  "frames": null,
+  "jump": null,
+  "cause": {
+   "kind": "setting",
+   "path": "grade.spill"
+  }
+ },
+ {
+  "id": "setting_not_used_grade.person_light",
+  "severity": "info",
+  "code": "setting_not_used",
+  "message": "Light on the person is saved with the cue, but the render does not use it yet.",
+  "frames": null,
+  "jump": null,
+  "cause": {
+   "kind": "setting",
+   "path": "grade.person_light"
+  }
+ }
+]

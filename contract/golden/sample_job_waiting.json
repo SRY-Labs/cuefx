@@ -1,0 +1,17 @@
+{
+ "$comment": "ILLUSTRATIVE SAMPLE of a manual render job after export (task 21; real ids differ). Shape: job.schema.json.",
+ "id": "job-3f9c0a1b2d",
+ "look": "energy_orb",
+ "status": "waiting",
+ "stage": 2,
+ "stage_name": "Rendering (pass 1 of 2)",
+ "progress": 0.4,
+ "elapsed_s": 21.4,
+ "eta_s": null,
+ "error": null,
+ "manual": true,
+ "clip_id": "8861297b65b9",
+ "make_key": "5b1e0c7d9a24",
+ "files": {"package_download": "/api/manual/job-3f9c0a1b2d/package.zip"},
+ "warnings": []
+}

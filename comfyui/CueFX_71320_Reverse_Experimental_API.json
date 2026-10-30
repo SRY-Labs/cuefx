@@ -1,0 +1,785 @@
+{
+  "4852": {
+    "inputs": {
+      "filename_prefix": "CueFX_71320_reverse",
+      "format": "auto",
+      "format.codec": "auto",
+      "codec": "auto",
+      "video": [
+        "5518:4849",
+        0
+      ]
+    },
+    "class_type": "SaveVideo",
+    "_meta": {
+      "title": "Save Video"
+    }
+  },
+  "5001": {
+    "inputs": {
+      "file": "CueFX_71320_reverse_guide_41f.mp4",
+      "video-preview": ""
+    },
+    "class_type": "LoadVideo",
+    "_meta": {
+      "title": "Load layout video (Clay Video)"
+    }
+  },
+  "5508": {
+    "inputs": {
+      "value": "One luminous energy orb in the original room with the person visible, matching the supplied look image and following the guide video's orb position, scale, and motion. Preserve the original scene. In reversed time the orb contracts and dims toward clean source frames."
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Prompt (positive)"
+    }
+  },
+  "5509": {
+    "inputs": {
+      "value": ""
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Prompt (negative)"
+    }
+  },
+  "9009": {
+    "inputs": {
+      "image": "CueFX_71320_generated_H0057.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load reference image (Look Still)"
+    }
+  },
+  "5004:5600": {
+    "inputs": {
+      "vae_name": "ltx-2.5-audio-vae-bf16.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE - Audio"
+    }
+  },
+  "5004:5601": {
+    "inputs": {
+      "vae_name": "ltx-2.5-video-vae-bf16.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE - Video"
+    }
+  },
+  "5004:5602": {
+    "inputs": {
+      "unet_name": "ltx-2.5-22b-distilled-transformer-bf16.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "5004:5606": {
+    "inputs": {
+      "lora_name": "ltx-2.5-22b-ic-lora-layout-to-render-1.0.safetensors",
+      "strength_model": 1.0,
+      "model": [
+        "5004:5602",
+        0
+      ]
+    },
+    "class_type": "LTXICLoRALoaderModelOnly",
+    "_meta": {
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 IC-LoRA Loader Model Only"
+    }
+  },
+  "5004:9035": {
+    "inputs": {
+      "model_name": "ltx-2.5-latent-spatial-upscaler-x2-bf16-1.0.safetensors"
+    },
+    "class_type": "LatentUpscaleModelLoader",
+    "_meta": {
+      "title": "Load Latent Upscale Model"
+    }
+  },
+  "5004:5605": {
+    "inputs": {
+      "clip_name": "gemma4-12b-with-proj-ltx-2.5-bf16.safetensors",
+      "type": "ltxv",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP - Text Encoder"
+    }
+  },
+  "5548:5029": {
+    "inputs": {
+      "image": [
+        "5548:5026",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Get Image Size"
+    }
+  },
+  "5548:5026": {
+    "inputs": {
+      "resize_type": "scale shorter dimension",
+      "resize_type.shorter_size": 544,
+      "scale_method": "lanczos",
+      "input": [
+        "5548:9006",
+        0
+      ]
+    },
+    "class_type": "ResizeImageMaskNode",
+    "_meta": {
+      "title": "Resize Image/Mask"
+    }
+  },
+  "5548:9006": {
+    "inputs": {
+      "video": [
+        "5001",
+        0
+      ]
+    },
+    "class_type": "GetVideoComponents",
+    "_meta": {
+      "title": "Get Video Components"
+    }
+  },
+  "5014:2612": {
+    "inputs": {
+      "text": [
+        "5509",
+        0
+      ],
+      "clip": [
+        "5004:5605",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Negative Prompt)"
+    }
+  },
+  "5014:5558": {
+    "inputs": {
+      "switch": [
+        "5014:5557",
+        0
+      ],
+      "on_false": [
+        "5014:1241",
+        0
+      ],
+      "on_true": [
+        "5014:5504",
+        0
+      ]
+    },
+    "class_type": "ComfySwitchNode",
+    "_meta": {
+      "title": "positive conditioning source - If/Else Switch"
+    }
+  },
+  "5014:5560": {
+    "inputs": {
+      "switch": [
+        "5014:5557",
+        0
+      ],
+      "on_false": [
+        "5014:1241",
+        1
+      ],
+      "on_true": [
+        "5014:5505",
+        0
+      ]
+    },
+    "class_type": "ComfySwitchNode",
+    "_meta": {
+      "title": "negative conditioning source - If/Else Switch"
+    }
+  },
+  "5014:2483": {
+    "inputs": {
+      "text": [
+        "5508",
+        0
+      ],
+      "clip": [
+        "5004:5605",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "5014:5504": {
+    "inputs": {
+      "api_key": "",
+      "prompt": [
+        "5508",
+        0
+      ],
+      "enhance_prompt": false,
+      "ckpt_name": "ltx-2.5-22b-distilled-transformer-bf16.safetensors"
+    },
+    "class_type": "GemmaAPITextEncode",
+    "_meta": {
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Gemma API Text Encode - POSITIVE"
+    }
+  },
+  "5014:5505": {
+    "inputs": {
+      "api_key": "",
+      "prompt": [
+        "5509",
+        0
+      ],
+      "enhance_prompt": false,
+      "ckpt_name": "ltx-2.5-22b-distilled-transformer-bf16.safetensors"
+    },
+    "class_type": "GemmaAPITextEncode",
+    "_meta": {
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Gemma API Text Encode - NEGATIVE"
+    }
+  },
+  "5014:1241": {
+    "inputs": {
+      "frame_rate": [
+        "5548:9006",
+        2
+      ],
+      "positive": [
+        "5014:2483",
+        0
+      ],
+      "negative": [
+        "5014:2612",
+        0
+      ]
+    },
+    "class_type": "LTXVConditioning",
+    "_meta": {
+      "title": "LTXVConditioning"
+    }
+  },
+  "5014:5557": {
+    "inputs": {
+      "string": "",
+      "substring": "ltxv_",
+      "case_sensitive": true
+    },
+    "class_type": "StringContains",
+    "_meta": {
+      "title": "has ltxv api key?"
+    }
+  },
+  "9002:9005": {
+    "inputs": {
+      "frame_rate": [
+        "5548:9006",
+        2
+      ],
+      "positive": [
+        "5014:5558",
+        0
+      ],
+      "negative": [
+        "5014:5560",
+        0
+      ]
+    },
+    "class_type": "LTXVConditioning",
+    "_meta": {
+      "title": "LTXVConditioning"
+    }
+  },
+  "9002:3059": {
+    "inputs": {
+      "width": [
+        "5548:5029",
+        0
+      ],
+      "height": [
+        "5548:5029",
+        1
+      ],
+      "length": [
+        "5548:5029",
+        2
+      ],
+      "batch_size": 1
+    },
+    "class_type": "EmptyLTXVLatentVideo",
+    "_meta": {
+      "title": "EmptyLTXVLatentVideo"
+    }
+  },
+  "9002:5012": {
+    "inputs": {
+      "frame_idx": 0,
+      "strength": 1.0,
+      "latent_downscale_factor": [
+        "5004:5606",
+        1
+      ],
+      "crop": "disabled",
+      "use_tiled_encode": false,
+      "tile_size": 256,
+      "tile_overlap": 64,
+      "use_streaming": false,
+      "tile_frames": 97,
+      "positive": [
+        "9002:9005",
+        0
+      ],
+      "negative": [
+        "9002:9005",
+        1
+      ],
+      "vae": [
+        "5004:5601",
+        0
+      ],
+      "latent": [
+        "9002:3059",
+        0
+      ],
+      "image": [
+        "5548:5026",
+        0
+      ]
+    },
+    "class_type": "LTXAddVideoICLoRAGuide",
+    "_meta": {
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Add Video IC-LoRA Guide"
+    }
+  },
+  "9002:9042": {
+    "inputs": {
+      "frame_idx": -1,
+      "strength": 1.0,
+      "latent_downscale_factor": [
+        "5004:5606",
+        1
+      ],
+      "crop": "center",
+      "use_tiled_encode": false,
+      "tile_size": 256,
+      "tile_overlap": 64,
+      "use_streaming": false,
+      "tile_frames": 97,
+      "positive": [
+        "9002:5012",
+        0
+      ],
+      "negative": [
+        "9002:5012",
+        1
+      ],
+      "vae": [
+        "5004:5601",
+        0
+      ],
+      "latent": [
+        "9002:5012",
+        2
+      ],
+      "image": [
+        "9009",
+        0
+      ]
+    },
+    "class_type": "LTXAddVideoICLoRAGuide",
+    "_meta": {
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Add Video IC-LoRA Guide"
+    }
+  },
+  "5516:4832": {
+    "inputs": {
+      "noise_seed": 42
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "5516:4828": {
+    "inputs": {
+      "cfg": 1.0,
+      "model": [
+        "5004:5606",
+        0
+      ],
+      "positive": [
+        "9002:9042",
+        0
+      ],
+      "negative": [
+        "9002:9042",
+        1
+      ]
+    },
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "CFG Guider"
+    }
+  },
+  "5516:4831": {
+    "inputs": {
+      "sampler_name": "euler_ancestral"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "5516:4984": {
+    "inputs": {
+      "sigmas": "1.0, 0.99375, 0.9875, 0.98125, 0.975, 0.909375, 0.725, 0.421875, 0.0"
+    },
+    "class_type": "ManualSigmas",
+    "_meta": {
+      "title": "ManualSigmas"
+    }
+  },
+  "5516:4829": {
+    "inputs": {
+      "noise": [
+        "5516:4832",
+        0
+      ],
+      "guider": [
+        "5516:4828",
+        0
+      ],
+      "sampler": [
+        "5516:4831",
+        0
+      ],
+      "sigmas": [
+        "5516:4984",
+        0
+      ],
+      "latent_image": [
+        "80002",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "5516:5000": {
+    "inputs": {
+      "positive": [
+        "9002:9042",
+        0
+      ],
+      "negative": [
+        "9002:9042",
+        1
+      ],
+      "latent": [
+        "5516:4829",
+        0
+      ]
+    },
+    "class_type": "LTXVCropGuides",
+    "_meta": {
+      "title": "LTXVCropGuides"
+    }
+  },
+  "9034:9030": {
+    "inputs": {
+      "cfg": 1.0,
+      "model": [
+        "5004:5606",
+        0
+      ],
+      "positive": [
+        "9034:9043",
+        0
+      ],
+      "negative": [
+        "9034:9043",
+        1
+      ]
+    },
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "CFG Guider"
+    }
+  },
+  "9034:9031": {
+    "inputs": {
+      "noise_seed": 42
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "9034:9033": {
+    "inputs": {
+      "noise": [
+        "9034:9031",
+        0
+      ],
+      "guider": [
+        "9034:9030",
+        0
+      ],
+      "sampler": [
+        "9034:9029",
+        0
+      ],
+      "sigmas": [
+        "9034:9028",
+        0
+      ],
+      "latent_image": [
+        "80003",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "9034:9041": {
+    "inputs": {
+      "positive": [
+        "9034:9043",
+        0
+      ],
+      "negative": [
+        "9034:9043",
+        1
+      ],
+      "latent": [
+        "9034:9033",
+        0
+      ]
+    },
+    "class_type": "LTXVCropGuides",
+    "_meta": {
+      "title": "Crop stage-2 guides"
+    }
+  },
+  "9034:9039": {
+    "inputs": {
+      "frame_idx": 0,
+      "strength": 1.0,
+      "latent_downscale_factor": 1.0,
+      "crop": "disabled",
+      "use_tiled_encode": false,
+      "tile_size": 256,
+      "tile_overlap": 64,
+      "use_streaming": false,
+      "tile_frames": 97,
+      "positive": [
+        "5014:5558",
+        0
+      ],
+      "negative": [
+        "5014:5560",
+        0
+      ],
+      "vae": [
+        "5004:5601",
+        0
+      ],
+      "latent": [
+        "9034:9025",
+        0
+      ],
+      "image": [
+        "5548:5026",
+        0
+      ]
+    },
+    "class_type": "LTXAddVideoICLoRAGuide",
+    "_meta": {
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Add Video IC-LoRA Guide"
+    }
+  },
+  "9034:9025": {
+    "inputs": {
+      "samples": [
+        "5516:5000",
+        2
+      ],
+      "upscale_model": [
+        "5004:9035",
+        0
+      ],
+      "vae": [
+        "5004:5601",
+        0
+      ]
+    },
+    "class_type": "LTXVLatentUpsampler",
+    "_meta": {
+      "title": "LTXVLatentUpsampler"
+    }
+  },
+  "9034:9043": {
+    "inputs": {
+      "frame_idx": -1,
+      "strength": 1.0,
+      "latent_downscale_factor": 1.0,
+      "crop": "center",
+      "use_tiled_encode": false,
+      "tile_size": 256,
+      "tile_overlap": 64,
+      "use_streaming": false,
+      "tile_frames": 97,
+      "positive": [
+        "9034:9039",
+        0
+      ],
+      "negative": [
+        "9034:9039",
+        1
+      ],
+      "vae": [
+        "5004:5601",
+        0
+      ],
+      "latent": [
+        "9034:9039",
+        2
+      ],
+      "image": [
+        "9009",
+        0
+      ]
+    },
+    "class_type": "LTXAddVideoICLoRAGuide",
+    "_meta": {
+      "title": "\ud83c\udd5b\ud83c\udd63\ud83c\udd67 Add Video IC-LoRA Guide"
+    }
+  },
+  "9034:9028": {
+    "inputs": {
+      "sigmas": "0.909375, 0.725, 0.421875, 0.0"
+    },
+    "class_type": "ManualSigmas",
+    "_meta": {
+      "title": "ManualSigmas"
+    }
+  },
+  "9034:9029": {
+    "inputs": {
+      "sampler_name": "euler_ancestral"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "5518:4849": {
+    "inputs": {
+      "fps": [
+        "5548:9006",
+        2
+      ],
+      "bit_depth": 8,
+      "color_space": "sRGB",
+      "images": [
+        "5518:5538",
+        0
+      ]
+    },
+    "class_type": "CreateVideo",
+    "_meta": {
+      "title": "Create Video"
+    }
+  },
+  "5518:5538": {
+    "inputs": {
+      "tile_size": 512,
+      "overlap": 64,
+      "temporal_size": 128,
+      "temporal_overlap": 32,
+      "samples": [
+        "9034:9041",
+        2
+      ],
+      "vae": [
+        "5004:5601",
+        0
+      ]
+    },
+    "class_type": "VAEDecodeTiled",
+    "_meta": {
+      "title": "VAE Decode (Tiled)"
+    }
+  },
+  "80001": {
+    "class_type": "CueFXLoadFrameBatch",
+    "inputs": {
+      "relative_dir": "CueFX_71320_generated_prefix",
+      "expected_frames": 17
+    }
+  },
+  "80002": {
+    "class_type": "CueFXFixTemporalContext",
+    "inputs": {
+      "latent": [
+        "9002:9042",
+        2
+      ],
+      "vae": [
+        "5004:5601",
+        0
+      ],
+      "generated_prefix": [
+        "80001",
+        0
+      ],
+      "reverse_source": [
+        "5548:9006",
+        0
+      ],
+      "first_empty_cell": 5
+    }
+  },
+  "80003": {
+    "class_type": "CueFXFixTemporalContext",
+    "inputs": {
+      "latent": [
+        "9034:9043",
+        2
+      ],
+      "vae": [
+        "5004:5601",
+        0
+      ],
+      "generated_prefix": [
+        "80001",
+        0
+      ],
+      "reverse_source": [
+        "5548:9006",
+        0
+      ],
+      "first_empty_cell": 5
+    }
+  }
+}

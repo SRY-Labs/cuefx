@@ -1,0 +1,38 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "https://schemas.cuefx.invalid/analyze_result.schema.json",
+ "title": "CueFX analyze result",
+ "type": "object", "additionalProperties": false,
+ "required": ["track", "summary", "hand_size_px", "warnings"],
+ "properties": {
+  "track": {"$ref": "track.schema.json"},
+  "body_point": {
+   "type": "object", "additionalProperties": false, "required": ["part", "side"],
+   "description": "v2.7. Present only when the request asked for a body point other than the palm: the part and the side that was tracked. For fist, foot, knee and shoulder the side is the one whose point is nearer the click in the seed frame, which may not be the side that was asked for (then `side_from_click` is in `warnings`). cue/new writes this body_point into the cue.",
+   "properties": {"part": {"type": "string"}, "side": {"type": ["string", "null"]}}
+  },
+  "body_point_seed": {
+   "type": "object", "additionalProperties": false, "required": ["frame", "x", "y"],
+   "description": "v3.0. Present for a seedless non-palm body_point request: a real, highest-confidence tracked sample used as cue/new's required hand_seed. This is not an artist click.",
+   "properties": {
+    "frame": {"type": "integer", "minimum": 0},
+    "x": {"type": "number"},
+    "y": {"type": "number"}
+   }
+  },
+  "summary": {
+   "type": "object", "additionalProperties": false,
+   "required": ["tracked", "total", "uncertain_ranges"],
+   "properties": {
+    "tracked": {"type": "integer", "minimum": 0, "description": "frames where the hand was detected (source tracked)"},
+    "total": {"type": "integer", "minimum": 1},
+    "uncertain_ranges": {
+     "type": "array", "description": "runs of uncertain frames, each [start, end)",
+     "items": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}
+    }
+   }
+  },
+  "hand_size_px": {"type": "number", "description": "median palm width of the detected frames, plate px"},
+  "warnings": {"type": "array", "items": {"$ref": "warning.schema.json"}}
+ }
+}
